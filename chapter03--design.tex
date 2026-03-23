@@ -1,0 +1,191 @@
+\chapter{Design}
+\label{chap:design}
+\begin{comment}
+\defaultInstructions
+
+\begin{length}
+There are no strict length requirements for this chapter.  However, it is important that the writing is clear and concise.  Avoid repeating yourself.  Make sure to clearly signpost evidence for claims.  It should be possible for a reader to understand this chapter without consulting other sources.  It is expected that a typical project needs 3--6 pages, but this can vary considerably from project to project.
+\end{length}
+
+\begin{expectations}
+This chapter provides a conceptual description of how the software system developed by the system works.  Use diagrams to explain your design, but include some text to guide the reader.  It is essential that this chapter includes structural diagram (e.g. a UML class diagram, a component diagram, and/or a deployment diagram).  If you do not use UML diagrams, include a legend for the diagrams.
+
+The design as it is described herein must be an accurate reflection of what the team has built.  This is important: your claims about the design must match what was actually built.  Minor details can be omitted if they are not critical to the design and facilitates readability and understandability.  Make sure all diagrams are legible when this document is printed on A4.  If necessary, provide multiple diagrams with different levels of abstraction.
+\end{expectations}
+\end{comment}
+\section{System Architecture}
+This section describes the overall architecture of the system and how the frontend, backend, and database interact to support the ticketing platform.
+
+\subsection{System Layers}
+
+The PackItUp ticketing system follows a three-tier client–server architecture consisting of a React frontend, a Django REST backend, and a relational database. This layered design separates presentation logic, application logic, and data storage.
+
+The frontend is implemented as a React single-page application (SPA) running on port 3000, responsible for rendering the user interface, managing routing, and maintaining application state. The frontend communicates with the backend through RESTful API calls secured with JSON Web Token (JWT) authentication.
+
+The backend is implemented using Django and Django REST Framework, running on port 8000, and provides the system’s business logic including ticket management, meeting scheduling, and user authentication.
+
+Persistent data is stored in an SQLite database during development and accessed through Django’s Object Relational Mapping (ORM) layer.
+
+ [System Architecture Diagram]
+ % TODO: Insert System Architecture Diagram (React → Django REST → Database)
+
+\section{Component Design}
+This section describes the structure of the frontend components and how they organise the user interface and system functionality.
+
+\subsection{Frontend Pages}
+The frontend application is implemented as a React single-page application and is organised into modular page components located within the src/pages/ directory. Each page represents a major functional area of the system and interacts with the backend through REST API requests. For example, the UserDashboardPage allows students to view and manage their submitted tickets, while the StaffDashboardPage enables staff members to review and update assigned tickets. Ticket creation is handled through pages such as TicketFormPage, while additional pages provide supporting functionality including browsing staff members, requesting meetings, and viewing frequently asked questions.
+
+\subsection{Administrative Pages}
+Administrative functionality is implemented through specialised components located within the src/components/Admin/ directory. These components provide interfaces for managing system data and monitoring platform activity. The AdminDashboard acts as the central navigation hub for administrative operations and provides an overview of system statistics. Components such as TicketsManagement allow administrators to perform CRUD operations on tickets, including assigning staff members and updating ticket status. The UsersManagement component enables the management of user accounts and roles, while the Statistics component provides analytics and reporting capabilities, including the ability to export system data.
+
+\subsection{Shared Components}
+The application also includes shared components that provide reusable interface elements across multiple pages. These components ensure consistent navigation and layout throughout the system, for example the UserNavbar, which provides navigation for authenticated users, and components supporting the FAQ interface.
+
+\subsection{State Management and API Communication}
+Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
+
+[Frontent Component Diagram]
+
+\section{Backend Structure}
+This section describes the organisation of the backend application and the responsibilities of its main modules.
+
+\subsection{Django Applications}
+The backend is implemented using Django and Django REST Framework and is structured into several Django applications responsible for different areas of system functionality. The primary application, KCLTicketingSystems, contains the core logic of the ticketing platform, including ticket creation and management, user management, meeting request handling, and office hours management. An additional application, AIChatbot, provides an AI-powered support assistant using the Ollama framework. This module offers a chatbot interface that allows users to interact with an automated support system through a Django-rendered chat page and REST API endpoints.
+
+\subsection{View Organisation}
+Backend functionality is implemented through Django REST views located within the KCLTicketingSystems/views/ directory. These views expose API endpoints responsible for key operations such as ticket creation, ticket updates, replies, staff dashboards, and meeting requests. Administrative functionality is handled through separate views that provide system management capabilities including user administration, ticket oversight, and reporting.
+
+\subsection{Permissions and Access Control}
+Access control within the backend is implemented using a role-based permissions system. Users are assigned roles such as student, staff member, or administrator, which determine the actions they are permitted to perform within the system. Most API endpoints require authentication through JSON Web Tokens, ensuring that only authorised users can access protected resources. Custom permission classes are implemented to restrict certain operations to staff or administrators, such as managing meeting requests or performing administrative actions.
+
+[Backend component diagram]
+
+\section{Database Design}
+
+[UML Class Diagram]
+
+This section describes the structure of the system’s persistent data storage and the relationships between the main entities used by the application.
+
+The database schema is implemented using Django ORM models and is designed to support ticket management, communication between users and staff, and meeting scheduling. The central entity within the system is the User model, which extends Django’s AbstractUser class to include additional attributes such as a KCL student identifier (k\textunderscore number), department information, and a role field used to distinguish between student, staff, and administrator accounts.
+
+Support requests are represented by the Ticket model, which stores information including the issue type, description, priority level, and current status of the ticket. Each ticket is associated with the user who created it and may be assigned to a staff member responsible for resolving the issue. Tickets may contain multiple replies and attachments, enabling threaded communication between users and staff members.
+
+Replies are represented by the Reply model, which links users and tickets and allows users to respond to existing discussions. The model includes a self-referential relationship that supports nested replies, enabling threaded conversations within a ticket.
+
+Meeting scheduling functionality is implemented through the MeetingRequest model. This entity stores meeting requests submitted by students to staff members and records details such as the requested meeting date and time, a description of the meeting topic, and the current request status. Staff availability is defined through the OfficeHours model, which records weekly time slots during which staff members are available to meet with students.
+
+Attachments associated with support tickets are represented by the Attachment model, which stores file metadata and links uploaded files to the corresponding ticket.
+
+Several constraints are enforced within the data model to maintain data integrity. User email addresses and student identifiers are required to be unique. Meeting requests are validated to ensure that the requested meeting time falls within the staff member’s defined office hours, and office hour records enforce that start times occur before end times.
+
+
+\section{API Design}
+The frontend communicates with the backend through a RESTful API implemented using Django REST Framework. The API exposes endpoints for authentication, ticket management, meeting requests, and administrative operations. Most endpoints require authentication using JSON Web Tokens (JWT), which are included in the Authorization header of requests in the format Bearer <token>. API endpoints are organised according to user roles and system functionality.
+
+\subsection{Authentication Endpoints}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
+\hline
+/api/auth/register/ & POST & Create a new user account \\
+/api/auth/token/ & POST & Obtain JWT access and refresh tokens \\
+/api/auth/token/refresh/ & POST & Refresh an expired access token \\
+/api/users/me/ & GET & Retrieve the currently authenticated user \\
+\hline
+\end{tabular}
+\caption{Authentication API endpoints}
+\end{table}
+Authentication tokens are configured with a one-hour lifetime for access tokens and a longer validity period for refresh tokens.
+
+\subsection{Ticket Management Endpoints}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
+\hline
+/api/tickets/ & POST & Create a new support ticket \\
+/api/dashboard/ & GET & Retrieve tickets belonging to the authenticated user \\
+/api/dashboard/tickets/\{id\}/close/ & POST & Close an existing ticket \\
+/api/staff-dashboard/ & GET & Retrieve tickets assigned to staff members \\
+/api/staff/dashboard/\{id\}/update/ & PATCH & Update ticket status \\
+\hline
+\end{tabular}
+\caption{Ticket management API endpoints}
+\end{table}
+These endpoints allow users to create and manage support tickets while enabling staff members to review and update assigned tickets.
+
+\subsection{Meeting and Staff Endpoints}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
+\hline
+/api/staff/ & GET & Retrieve list of staff members \\
+/api/staff/\{id\}/ & GET & Retrieve staff profile and office hours \\
+/api/meeting-requests/ & POST & Submit a meeting request \\
+/api/staff/dashboard/meeting-requests/ & GET & Staff view incoming meeting requests \\
+/api/staff/dashboard/meeting-requests/\{id\}/accept/ & POST & Accept a meeting request \\
+/api/staff/dashboard/meeting-requests/\{id\}/deny/ & POST & Reject a meeting request \\
+\hline
+\end{tabular}
+\caption{Meeting request and staff endpoints}
+\end{table}
+Meeting requests are validated against staff office hours to ensure that appointments can only be scheduled during available time slots.
+
+\subsection{Administrative Endpoints}
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
+\hline
+/api/admin/dashboard/stats/ & GET & Retrieve system statistics \\
+/api/admin/tickets/ & GET & Retrieve all tickets \\
+/api/admin/tickets/\{id\}/update/ & PATCH & Update ticket information \\
+/api/admin/tickets/\{id\}/delete/ & DELETE & Delete a ticket \\
+/api/admin/users/ & GET & Retrieve all users \\
+\hline
+\end{tabular}
+\caption{Administrative API endpoints}
+\end{table}
+
+
+\section{System Workflows}
+This section illustrates the main operational processes of the system, such as ticket creation and meeting requests, and how different components interact to complete these tasks.
+
+\subsection{Ticket Creation Workflow}
+
+\subsection{Meeting Request Workflow}
+
+\subsection{Office Hours Management Workflow}
+
+\section{Design Decisions}
+This section discusses the key architectural and technological choices made during development and the reasoning behind these decisions.
+
+\subsection{Choice of React and Django}
+The system was implemented using a React frontend and a Django REST backend. This combination was chosen to provide a clear separation between the presentation layer and the application logic. React enables the development of a responsive single-page application that efficiently updates the user interface without requiring full page reloads, making it well suited to dashboard-style interfaces such as ticket management systems. Django REST Framework provides a structured and scalable backend environment for implementing business logic, data validation, and API endpoints.
+
+Using a REST API between the frontend and backend also allows the system to support multiple clients in the future. For example, the same backend API could potentially be consumed by mobile applications or other services without requiring changes to the server-side implementation.
+
+\subsection{Benefits of the Architecture}
+The chosen architecture provides several advantages for the development and maintenance of the system. Separating the frontend and backend allows user interface development to be performed independently from server-side logic. React’s component-based design supports reusable interface elements, while Django provides a structured backend environment with built-in tools such as the ORM and authentication framework. Together, these technologies enable a maintainable and scalable system architecture.
+
+\subsection{Limitations and Trade-offs}
+Despite its advantages, the chosen architecture introduces some trade-offs. Maintaining separate frontend and backend codebases increases development complexity compared to a single monolithic application. Additional configuration is also required to enable communication between the two layers, such as CORS and API proxy setup.
+
+The system currently uses SQLite as the development database, which simplifies setup but is not suitable for large-scale production environments. However, the architecture allows migration to a more scalable database such as PostgreSQL if required.
+
+The use of stateless JSON Web Token (JWT) authentication also introduces limitations, as tokens cannot easily be revoked before expiration without additional infrastructure. For the scope of this project, this trade-off was considered acceptable.
+
+\subsection{Alternative Approaches Considered}
+Several alternative approaches were considered during the design process. A server-rendered application using Django templates was evaluated but rejected due to its limited support for dynamic user interfaces. Other options, such as Next.js server-side rendering, GraphQL APIs, and microservice architectures, were also considered but were deemed unnecessarily complex for the scope of the project. A REST-based architecture using React and Django REST Framework provided a simpler and more appropriate solution.
+
+
+\begin{comment}
+\section{Security Considerations}
+This section outlines the mechanisms used to ensure secure access to the system, including authentication, authorization, and protection of user data.
+\end{comment}

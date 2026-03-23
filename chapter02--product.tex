@@ -1,0 +1,161 @@
+\chapter{Product}
+\label{sect:product}
+
+\defaultInstructions
+
+\begin{length}
+There are no strict length requirements for this chapter.  However, it is important that the writing is clear and concise.  Avoid repeating yourself.  It is expected that a typical project needs 2--4 pages, but this can vary considerably from project to project.
+\end{length}
+
+\begin{expectations}
+This is a fairly short chapter that outlines what the team has developed and why. It will be used to try and understand the product your team has developed and how the features we can observe provide value to certain people. The chapter should describe what the team has delivered, not what the team hoped to deliver.
+
+The section headers below provide a suggested structure.  You should feel free to change it or extend it.
+\end{expectations}
+
+\section{Objectives, context and key stakeholders}
+\label{sect:objectives}
+Universities such as King’s College London are large, complex organisations that provide a wide range of services to students. Students frequently require support across areas including academic assessment, welfare, financial matters, careers, and general university procedures. While specialist services exist for each of these areas, generalist staff: such as programme officers and personal tutors, often act as the first point of contact. Personal tutors, who are typically teaching staff, must manage these queries alongside their existing teaching, research and administrative duties.
+
+This situation creates several recurring challenges: programme officers and tutors spend substantial time handling misdirected or duplicated queries, while overdue or unanswered queries risk being overlooked. The lack of a structured query-management process reduces staff efficiency and can negatively impact the student experience. For example, students may experience delayed responses to time-sensitive queries, and staff may encounter duplicated work or increased administrative burden.
+
+\subsection{Project Objectives}
+
+The primary objective of this project is to develop a Ticketing System that provides programme officers with a centralised web application for managing incoming student queries. The core aim is to create a single, structured workspace where every query can be viewed, tracked and is accounted for. 
+The system aims to deliver the following benefits:
+
+\begin{enumerate}
+\item \textbf{Improve staff efficiency} – Reduce time spent on routine or duplicated queries, allowing staff to focus on complex or high-priority issues.
+
+\item \textbf{Enhance student experience} – Offer students a reliable and transparent channel for submitting queries, with confirmation of receipt and updates on progress.
+
+\item \textbf{Increase accountability and traceability} – Ensure that all queries are logged, assigned and tracked; preventing them from being lost or overlooked.
+
+\item \textbf{Support evidence-based decision making} – Enable collection of data on query types, response times and resolution patterns to inform process improvements.
+
+\item \textbf{Enable scalability} – Provide a system capable of supporting increasing query volumes.
+\end{enumerate}
+
+\subsection{Key Stakeholders}
+
+The main stakeholders of the Ticketing System are:
+
+\begin{itemize}
+\item \textbf{Programme officers and generalist staff} – Require a structured interface to manage queries efficiently, prioritise work and reduce repetitive tasks. They expect a reliable system that supports their workflow.
+
+\item \textbf{Students} – Seek timely, consistent support. They expect confirmation that their queries have been received and visibility of progress until resolution.
+
+\item \textbf{University administration} – Interested in improving operational efficiency and student satisfaction. They benefit indirectly from enhanced staff productivity and reporting capabilities that enable monitoring of service performance.
+\end{itemize}
+
+Secondary stakeholders include academic departments and IT support teams responsible for maintaining the system and ensuring smooth integration with existing university services.
+
+\subsection{Value Proposition}
+
+By centralising query management, the Ticketing System reduces duplicated effort, improves response times and provides a transparent communication channel for students. Staff can focus on cases that genuinely require human attention, while the university gains actionable insights into recurring issues, supporting continuous improvement in student services. The system therefore, enhances efficiency, accountability and transparency; delivering measurable benefits to all stakeholders involved.
+
+\begin{expectations}
+This section aims to explain why you develop the project.
+
+A good starting point are the project's key stakeholders and, insofar it is relevant, the background or context for the project.  Provide enough information for the reader to understand the project objectives.
+
+As you explain the project objectives, focus exclusively on what value the system adds to the stakeholders.  Your objectives should justify \emph{why} you are building the system.  Do not confuse objectives with requirements: software requirements are \emph{not} objectives.  The software requirements explain \emph{what} your system can do.  In other words, they are a way to achieve objectives.  Software requirements do \emph{not} belong in this section.  Indeed, if objectives and requirements are confused, the reader may be left with the impression that the project is a solution in search of a problem.
+
+Your project should have at least one objective.  Otherwise, the project is a pointless exercise.  Having many objectives does not necessarily make for a better project, and could leave the project unfocussed.
+\end{expectations}
+
+
+\section{Requirements and specifications}
+\label{sect:requirements}
+The requirements of the Ticketing System are derived directly from the project objectives described in Section 2.1. They define the capabilities and constraints of the system needed to meet the needs of students, programme officers and administrators. To present these requirements clearly, this section uses a user story approach, which expresses the system’s functionality from the perspective of each stakeholder and links directly to the value the system provides.
+
+Each user story describes a specific goal that a stakeholder wishes to achieve using the system. The corresponding system feature or page illustrates where the functionality can be experienced in the implemented platform. In addition to functional requirements, key non-functional requirements are listed to ensure performance, security, accessibility and scalability of the system.
+
+The following tables summarise both the functional and non-functional requirements, providing a clear map between stakeholder needs, project objectives and system features:
+
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{|L|L|L|L|}
+\hline
+\textbf{Stakeholder} & \textbf{User Story / Requirement} & \textbf{Objective Supported} & \textbf{System Feature / Page} \\
+\hline
+
+Student & Submit a support ticket with issue type, description and attachments & Enhance student experience & TicketFormPage \\
+\hline
+
+Student & View the status and history of submitted tickets & Increase accountability and transparency & UserDashboardPage \\
+\hline
+
+Student & Receive immediate confirmation or automated response upon ticket submission & Enhance student experience, improve staff efficiency & TicketFormPage, Automated Email / AI Chatbot \\
+\hline
+
+Student & Request meetings with staff, specifying date, time and topic & Improve staff efficiency, enhance student experience & MeetingRequestPage \\
+\hline
+
+Student & Close a ticket once their issue is resolved & Increase accountability and transparency & UserDashboardPage \\
+\hline
+
+Student & Reply to tickets after staff response & Enhance student experience & UserDashboardPage \\
+\hline
+
+Student & Receive progress updates on submitted tickets & Enhance student experience, improve transparency & UserDashboardPage \\
+\hline
+
+Staff / Programme Officer & View all tickets assigned to them & Improve staff efficiency & StaffDashboardPage \\
+\hline
+
+Staff / Programme Officer & Assign tickets to the appropriate staff member & Improve staff efficiency, increase accountability & StaffDashboardPage, TicketsManagement Component \\
+\hline
+
+Staff / Programme Officer & Update ticket status and close tickets once resolved & Increase accountability and transparency & StaffDashboardPage \\
+\hline
+
+Staff / Programme Officer & Accept or deny student meeting requests based on office hours & Improve staff efficiency & StaffDashboardPage, OfficeHours Management \\
+\hline
+
+Staff / Programme Officer & Redirect tickets to other staff members if more suitable & Improve staff efficiency, ensure correct support & StaffDashboardPage, TicketsManagement Component \\
+\hline
+
+Administrator & Create, update and deactivate user accounts with roles & Increase accountability and transparency & UsersManagement Component \\
+\hline
+
+Administrator & View, update or delete any ticket in the system & Increase accountability and transparency & TicketsManagement Component \\
+\hline
+
+Administrator & View average reply time per department & Support evidence-based decision making & Statistics Component / AdminDashboard \\
+\hline
+
+Administrator / Staff & Report inappropriate tickets & Maintain integrity of support & AdminDashboard/ StaffDashboardPage \\
+\hline
+
+\end{tabularx}
+\caption{User story requirements mapped to system objectives and implemented features}
+\label{tab:userstories}
+\end{table}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{|p{1.5cm}|L|} 
+\hline
+\textbf{ID} & \textbf{Non-Functional Requirement} \\
+\hline
+NFR-1 & The system shall be accessible via modern web browsers on both desktop and mobile devices. \\
+\hline
+NFR-2 & The system shall authenticate users securely using JWT tokens. \\
+\hline
+NFR-3 & Ticket submission and updates shall respond within 2 seconds under normal load. \\
+\hline
+NFR-4 & The system shall maintain data integrity, ensuring that all tickets, replies, and meeting requests are reliably stored. \\
+\hline
+\end{tabularx}
+\caption{Non-Functional Requirements}
+\label{tab:nfr}
+\end{table}
+
+\begin{expectations}
+Use this section to provide the requirements and/or specifications for the project.  There are not strict rules on the format you should be using.  You can employ user stories or more conventional descriptions of requirements/specifications.  However, you should be consistent.  Explain how the requirements/specifications derive from the objectives.  If it might not be clear to the reader, identify where the reader can experience the implementation in the system that was delivered.
+\end{expectations}

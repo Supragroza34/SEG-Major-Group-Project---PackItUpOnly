@@ -1,0 +1,35 @@
+\chapter{Introduction}
+
+Universities are large, complex organisations that provide a wide range of
+services to their students. At King's College London (KCL), students regularly
+need support across areas such as academic assessment, welfare, financial
+matters, careers, and university procedures. While specialist services exist for
+each of these areas, students frequently direct their queries to generalist
+staff---such as programme officers and personal tutors---who must then triage,
+redirect, or respond to a significant volume of incoming messages. This creates
+a recurring burden: staff spend considerable time handling queries that are
+routine, misdirected, or duplicated across multiple recipients, while overdue
+and unanswered queries risk going unnoticed altogether. The absence of a
+structured query-management process means that both staff efficiency and student
+experience suffer.
+
+The KCL Ticketing System addresses this problem by providing programme officers
+with a centralised web application for managing incoming student queries as
+support tickets. Programme officers gain a single, structured workspace where
+every query is visible, trackable, and attributable---eliminating the risk of
+queries going unanswered and removing the duplicated effort that arises when the
+same query reaches multiple members of staff. Students benefit from a reliable,
+transparent channel for raising issues, with confidence that their query has
+been received and will be handled. The system further reduces staff workload by
+enabling immediate, automated preliminary responses to routine queries,
+reserving human attention for the cases that genuinely require it.
+
+The system is a full-stack web application accessible through any modern
+browser. The back end is built with \textbf{Django 5} and
+\textbf{Django REST Framework} (Python), exposing a JSON API secured with
+JWT authentication. The front end is a single-page application built with
+\textbf{React 18} and \textbf{Redux Toolkit} (JavaScript). Email integration is
+provided by \textbf{Mailgun}, and the AI chatbot is powered by
+\textbf{Ollama} running a \texttt{llama2} model locally. Data is persisted in
+\textbf{SQLite} for development, with the architecture supporting migration to a
+production-grade relational database.
