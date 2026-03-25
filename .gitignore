@@ -1,0 +1,7 @@
+# LaTeX auxiliary files
+*.aux
+*.bcf
+*.log
+*.out
+*.run.xml
+*.toc
