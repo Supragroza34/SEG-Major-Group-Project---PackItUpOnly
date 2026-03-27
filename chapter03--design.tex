@@ -24,7 +24,7 @@ The frontend is implemented as a React single-page application (SPA) running on 
 
 The backend is implemented using Django and Django REST Framework, running on port 8000, and provides the system’s business logic including ticket management, meeting scheduling, and user authentication.
 
-Persistent data is stored in an SQLite database during development and accessed through Django’s Object Relational Mapping (ORM) layer.
+While an SQLite database is used for persistent storage during local development, the deployed production environment utilizes a cloud-hosted PostgreSQL database provided by Neon (neon.tech). Access to both is managed seamlessly through Django’s Object Relational Mapping (ORM) layer, ensuring environment parity.
 
  [System Architecture Diagram]
  % TODO: Insert System Architecture Diagram (React → Django REST → Database)
@@ -50,13 +50,32 @@ Global application state is managed using Redux Toolkit, which provides a centra
 This section describes the organisation of the backend application and the responsibilities of its main modules.
 
 \subsection{Django Applications}
-The backend is implemented using Django and Django REST Framework and is structured into several Django applications responsible for different areas of system functionality. The primary application, KCLTicketingSystems, contains the core logic of the ticketing platform, including ticket creation and management, user management, meeting request handling, and office hours management. An additional application, AIChatbot, provides an AI-powered support assistant using the Ollama framework. This module offers a chatbot interface that allows users to interact with an automated support system through a Django-rendered chat page and REST API endpoints.
+The backend is implemented using Django and Django REST Framework and is structured into several Django applications responsible for different areas of system functionality. The primary application, KCLTicketingSystems, contains the core logic of the ticketing platform, including ticket creation and management, user management, meeting request handling, and office hours management. An additional application, AIChatbot, provides an AI-powered support assistant using the Gemini API. This module offers a chatbot interface that allows users to interact with an automated support system through a Django-rendered chat page and REST API endpoints.
 
 \subsection{View Organisation}
 Backend functionality is implemented through Django REST views located within the KCLTicketingSystems/views/ directory. These views expose API endpoints responsible for key operations such as ticket creation, ticket updates, replies, staff dashboards, and meeting requests. Administrative functionality is handled through separate views that provide system management capabilities including user administration, ticket oversight, and reporting.
 
 \subsection{Permissions and Access Control}
 Access control within the backend is implemented using a role-based permissions system. Users are assigned roles such as student, staff member, or administrator, which determine the actions they are permitted to perform within the system. Most API endpoints require authentication through JSON Web Tokens, ensuring that only authorised users can access protected resources. Custom permission classes are implemented to restrict certain operations to staff or administrators, such as managing meeting requests or performing administrative actions.
+
+\subsection{AI Helper Development with Gemini API}
+An AI-powered support assistant was developed to enhance the student experience by providing immediate, automated responses to routine queries. This feature acts as a first-line support mechanism, potentially resolving issues before a formal ticket is created. The assistant is implemented using the Google Gemini API, integrated through a dedicated backend service to provide high-performance natural language processing.
+
+From an architectural perspective, the AI helper follows a secure request-response pipeline.
+
+\textbf{Backend Proxying:} The student submits a query through the React frontend to a protected Django endpoint, and the backend forwards the request to the Gemini API. This proxy-based design is a key security control because API credentials remain server-side and are never exposed in client-side code.
+
+\textbf{Prompt Engineering and Contextual Grounding:} To keep responses relevant to King's College London (KCL) procedures, the system uses prompt engineering and contextual grounding. Queries are enriched with system-specific context, including academic assessment types, welfare services, and financial support workflows, to reduce hallucinations and improve policy-aligned, actionable output.
+
+\textbf{Stateless Inference:} The integration uses Gemini's generative capabilities to interpret user intent and return sanitised JSON responses to the frontend. This supports a responsive, dashboard-integrated chat experience without requiring persistent model-side session state.
+
+Operational safeguards were also implemented to maintain service quality.
+
+\textbf{Input Validation and Sanitization:} User inputs are validated and sanitised at the Django layer before forwarding requests to Gemini, reducing prompt-injection risk and improving data integrity.
+
+\textbf{Graceful Error Handling:} The backend includes exception handling for API failures such as rate-limit events and timeout errors. If a reliable answer cannot be generated, the interface guides the student to the TicketFormPage for manual support submission.
+
+\textbf{Optimization:} Generation parameters, including temperature and maximum token limits, were calibrated to balance response depth with low-latency interactions in the student dashboard.
 
 [Backend component diagram]
 
