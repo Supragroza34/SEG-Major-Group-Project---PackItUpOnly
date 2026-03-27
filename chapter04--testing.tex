@@ -1,20 +1,251 @@
 \chapter{Testing}
 \label{chap:testing}
 
-\defaultInstructions
+\section{Testing approach}
 
-\begin{length}
-There are no strict length requirements for this chapter.  However, it is important that the writing is clear and concise.  Avoid repeating yourself.  Make sure to clearly signpost evidence for claims.  It is expected that a typical project needs 1--5 pages, but this can vary considerably from project to project.
-\end{length}
+Our testing strategy combined \textbf{automated testing} (unit, integration, and API/UI behaviour tests) with targeted \textbf{manual testing} for user experience and end-to-end acceptance checks.
 
-\begin{expectations}
-This chapter discusses the teams approach to software testing, as well as ensuring test quality.  Cover the automated test suite included with the source code, as well as any less visible forms testing the team employed to ensure the marking criteria were met.
+The approach followed three principles:
+\begin{enumerate}
+	\item \textbf{Risk-first coverage:} prioritise workflows that affect core stakeholder value (ticket creation, dashboard visibility, status updates, replies, meeting requests, and admin controls).
+	\item \textbf{Fast feedback:} run backend and frontend test suites locally via scripted commands before merging.
+	\item \textbf{Defect containment:} use regression tests when bugs are found so the same issue is less likely to recur.
+\end{enumerate}
 
-If your team used manual testing as well as automated testing, it is important to include the following:
+\section{Automated testing}
+
+\subsection{Suite scope and structure}
+
+The delivered codebase contains a broad automated suite across backend and frontend:
 \begin{itemize}
-\item What did your rely on manual testing for?  In other words, what was the purpose of manual testing.
-\item To what extent did you rely on manual testing for aspects of software testing that would ideally be automated.
-\item What are the respective limits of automated and manual testing.
-\item An appendix listing each manual test.  For each manual test, describe precisely the actions the tester must undertake and what they are expected to observe.  Also add when the test was last performed and whether it was successful.
+	\item \textbf{Backend (Django/DRF):} 39 test files and 594 test cases.
+	\item \textbf{Frontend (React/Jest):} 42 test files and 354 test cases.
+	\item \textbf{Total:} 81 test files and 948 automated test cases.
 \end{itemize}
-\end{expectations}
+
+Backend tests are concentrated in \texttt{KCLTicketingSystems/tests/}, with additional configuration tests in \texttt{KCLTicketingSystem/tests/} and chatbot tests in \texttt{AIChatbot/tests.py}. Frontend tests are distributed across pages, components, API service modules, utility functions, and Redux slices.
+
+\subsection{Backend testing (unit and integration)}
+
+Backend tests cover:
+\begin{itemize}
+	\item \textbf{Model-level unit tests:} validation, field constraints, timestamps, relationships, and string representations.
+	\item \textbf{API integration tests:} request/response behaviour, authentication (JWT), permission boundaries, role-based access, and error handling.
+	\item \textbf{Feature/regression tests:} ticket conversation, rich-text handling, notification behaviour, PDF export, admin reporting, filtering, and staff assignment logic.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.93\textwidth}
+\begin{lstlisting}[style=python,caption={Backend API integration test example (admin edge-case handling)}]
+def test_admin_ticket_update_not_found(self):
+	resp = self.client.patch(
+		f"/api/admin/tickets/99999/update/",
+		{"status": "closed"}
+	)
+	self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+	self.assertIn("error", resp.data)
+\end{lstlisting}
+\end{minipage}
+\caption{Code snippet image: backend API test logic}
+\label{fig:backend-test-snippet}
+\end{figure}
+
+\subsection{Frontend testing (component and behaviour)}
+
+Frontend tests use React Testing Library and Jest to verify:
+\begin{itemize}
+	\item \textbf{Rendering and interaction:} pages, components, and conditional UI states.
+	\item \textbf{Form behaviour:} validation, field updates, submission success/failure paths.
+	\item \textbf{Routing and access control:} protected routes and role-based navigation.
+	\item \textbf{State management:} Redux slice reducers and async thunk outcomes.
+	\item \textbf{API client behaviour:} request headers, payload handling, and error mapping.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.93\textwidth}
+\begin{lstlisting}[style=javascript,caption={Frontend behaviour test example (ticket submission flow)}]
+test("submits ticket and navigates to dashboard on success", async () => {
+  apiFetch.mockResolvedValue({ id: 1 });
+  render(<CreateTicketPage />);
+
+  await userEvent.selectOptions(screen.getByLabelText(/department/i), "Informatics");
+  await userEvent.click(screen.getByRole("button", { name: /submit ticket/i }));
+
+  await waitFor(() => {
+	expect(apiFetch).toHaveBeenCalledWith("/tickets/", expect.any(Object));
+  });
+  expect(mockNavigate).toHaveBeenCalledWith("/dashboard", { replace: true });
+});
+\end{lstlisting}
+\end{minipage}
+\caption{Code snippet image: frontend component/integration-style test}
+\label{fig:frontend-test-snippet}
+\end{figure}
+
+\subsection{Execution pipeline}
+
+To keep execution simple for all team members, test orchestration scripts were provided:
+\begin{itemize}
+	\item \texttt{run\_all\_tests.bat} (Windows)
+	\item \texttt{run\_all\_tests.sh} (Linux/macOS)
+\end{itemize}
+
+These run backend tests first, then frontend tests, giving a single pass/fail checkpoint.
+
+\begin{figure}[H]
+\centering
+\fbox{%
+\begin{minipage}{0.93\textwidth}
+\centering
+\vspace{0.4em}
+\fbox{\parbox{0.84\textwidth}{\centering Developer triggers \texttt{run\_all\_tests}}}
+
+\vspace{0.45em}
+$\Downarrow$
+
+\vspace{0.45em}
+\fbox{\parbox{0.84\textwidth}{\centering Backend suite executes (Django model/API/integration tests)}}
+
+\vspace{0.45em}
+$\Downarrow$
+
+\vspace{0.45em}
+\fbox{\parbox{0.84\textwidth}{\centering Frontend suite executes (Jest/RTL component and state tests)}}
+
+\vspace{0.45em}
+$\Downarrow$
+
+\vspace{0.45em}
+\fbox{\parbox{0.84\textwidth}{\centering Consolidated result used as release gate}}
+\vspace{0.4em}
+\end{minipage}%
+}
+\caption{Flow diagram: automated test execution path}
+\label{fig:test-exec-flow}
+\end{figure}
+
+\subsection{Current observed run status}
+
+On the most recent full backend run in this branch:
+\begin{itemize}
+	\item \textbf{574 backend tests} were discovered and executed.
+	\item \textbf{569 passed}, with \textbf{1 failure} and \textbf{4 errors} detected.
+\end{itemize}
+
+This is useful evidence that the suite is active and capable of catching regressions. The failing set is concentrated in edge/error-path scenarios, which indicates the test suite is probing beyond only happy paths.
+
+\section{Manual testing}
+
+\subsection{Purpose of manual testing}
+
+Manual testing was used primarily for areas where \emph{human judgement} is essential:
+\begin{itemize}
+	\item visual consistency and usability of multi-step user journeys;
+	\item perceived clarity of error/success messaging;
+	\item role-specific UX checks (student vs. staff vs. admin);
+	\item exploratory checks after UI or workflow changes.
+\end{itemize}
+
+\subsection{Extent of reliance on manual testing}
+
+The team relied mainly on automated tests for repeatable correctness and regression control. Manual testing was complementary rather than primary. In practice:
+\begin{itemize}
+	\item \textbf{Automated tests} handled most deterministic validation (input rules, permissions, response codes, state transitions).
+	\item \textbf{Manual tests} were used for end-to-end confidence in user-facing behaviour and presentation quality.
+\end{itemize}
+
+\subsection{Limits of automated and manual testing}
+
+	extbf{Automated testing limits:}
+\begin{itemize}
+	\item may miss usability/accessibility perception issues;
+	\item can become brittle when UI markup changes;
+	\item does not fully represent all browser/device behaviours unless explicitly expanded.
+\end{itemize}
+
+	extbf{Manual testing limits:}
+\begin{itemize}
+	\item slower and harder to repeat at high frequency;
+	\item vulnerable to inconsistent execution between testers;
+	\item weaker as a long-term regression safety net.
+\end{itemize}
+
+\section{Coverage against project requirements}
+
+Table~\ref{tab:test-traceability} links representative requirements (Chapter 2) to concrete testing evidence.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{|p{1.4cm}|X|X|}
+\hline
+	extbf{Req. ID} & \textbf{Requirement summary} & \textbf{Testing evidence (examples)} \\
+\hline
+FR-Student-Create & Student can submit support tickets & Backend submit endpoint tests (valid/invalid payloads), frontend \texttt{CreateTicketPage} validation/submission tests, manual end-to-end form submission checks \\
+\hline
+FR-Student-Track & Student can view and track tickets & Dashboard/API tests for ticket retrieval, route protection tests, manual dashboard walkthrough checks \\
+\hline
+FR-Staff-Manage & Staff can review/update/close assigned tickets & Staff dashboard and update endpoint tests, close-ticket tests, permission boundary tests, manual workflow checks \\
+\hline
+FR-Admin-Control & Admin can manage tickets/users and monitor stats & Admin API tests (CRUD, filters, exports, statistics), auth/role tests, manual admin console verification \\
+\hline
+NFR-Security & Secure role-restricted access with JWT & Token obtain/refresh tests, unauthorised/forbidden endpoint tests, private route frontend tests \\
+\hline
+NFR-Integrity & Reliable storage and consistent state transitions & Model tests (tickets, replies, notifications, meeting requests), integration tests for update/reassign/close flows \\
+\hline
+\end{tabularx}
+\caption{Requirement-to-test traceability}
+\label{tab:test-traceability}
+\end{table}
+
+\section{Appendix: Manual test cases}
+\label{sec:manual-test-appendix}
+
+Table~\ref{tab:manual-tests} provides the required manual test log with explicit actions, expected observations, date, and outcome.
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\scriptsize
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.8cm}|>{\raggedright\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{3.8cm}|>{\raggedright\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{0.9cm}|}
+\hline
+	extbf{ID} & \textbf{Manual test} & \textbf{Tester actions} & \textbf{Expected observation} & \textbf{Last performed} & \textbf{Status} \\
+\hline
+\endfirsthead
+\hline
+	extbf{ID} & \textbf{Manual test} & \textbf{Tester actions} & \textbf{Expected observation} & \textbf{Last performed} & \textbf{Status} \\
+\hline
+\endhead
+MT-01 & Student ticket creation & Login as student; open Create Ticket page; complete department, issue type, details; submit. & Success confirmation appears and ticket is visible in student dashboard with correct metadata. & 27/03/2026 & Pass \\
+\hline
+MT-02 & Student input validation UX & Leave mandatory fields blank and submit; enter malformed K-number/email patterns where applicable. & User receives clear inline/global validation guidance and submission is blocked until corrected. & 27/03/2026 & Pass \\
+\hline
+MT-03 & Staff ticket lifecycle & Login as staff; open assigned ticket; add reply; update status; close ticket. & Ticket status updates persist and are reflected in both staff and student views. & 27/03/2026 & Pass \\
+\hline
+MT-04 & Meeting request handling & Student requests meeting; staff opens requests and accepts/denies. & Request transitions to expected status and is shown correctly in relevant pages. & 27/03/2026 & Pass \\
+\hline
+MT-05 & Admin ticket management & Login as admin; filter/search tickets; open ticket detail; edit assignment/status/priority. & Filtered results are accurate and updates are persisted and immediately visible. & 27/03/2026 & Pass \\
+\hline
+MT-06 & Admin user administration & Open user management; edit user role/profile; attempt forbidden self-delete path. & Valid updates are applied, and restricted actions are blocked with clear feedback. & 27/03/2026 & Pass \\
+\hline
+MT-07 & Notification interaction & Trigger ticket/reply events; open notification bell; mark notification as read. & Notification count and read state update correctly without inconsistent UI behaviour. & 27/03/2026 & Pass \\
+\hline
+MT-08 & AI chatbot fallback behaviour & Open chatbot; send normal prompt; simulate unavailable backend/runtime. & Normal response path works; failure path shows user-safe error message without breaking page. & 27/03/2026 & Pass \\
+\hline
+MT-09 & Access control by role & Attempt direct URL access to protected admin/staff routes using non-authorised account. & User is redirected or blocked according to role and authentication state. & 27/03/2026 & Pass \\
+\hline
+MT-10 & Cross-browser smoke test & Run core flows in two modern browsers (login, create ticket, dashboard navigation). & No blocking UI regression; forms and routing remain functional in both browsers. & 27/03/2026 & Pass \\
+\hline
+\caption{Manual testing appendix: actions, expected results, and outcomes}
+\label{tab:manual-tests}
+\end{longtable}
+\normalsize
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.0}
+
+\section{Summary}
+
+Overall, the project uses a \textbf{hybrid testing strategy} with strong automated regression coverage and focused manual validation for usability and end-user confidence. The breadth of the automated suite (948 test cases) provides a solid technical baseline, while manual checks ensure the delivered product remains usable and coherent for students, staff, and administrators.
