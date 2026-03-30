@@ -18,9 +18,9 @@ The approach followed three principles:
 
 The delivered codebase contains a broad automated suite across backend and frontend:
 \begin{itemize}
-	\item \textbf{Backend (Django/DRF):} 39 test files and 594 test cases.
-	\item \textbf{Frontend (React/Jest):} 42 test files and 354 test cases.
-	\item \textbf{Total:} 81 test files and 948 automated test cases.
+	\item \textbf{Backend (Django/DRF):} 41 test files across app-level, project-level, and chatbot tests.
+	\item \textbf{Frontend (React/Jest):} 42 test files across pages, components, store slices, services, and utilities.
+	\item \textbf{Executed in latest full run:} 630 backend tests and 410 frontend tests (\textbf{1,040 total}), all passing.
 \end{itemize}
 
 Backend tests are concentrated in \texttt{KCLTicketingSystems/tests/}, with additional configuration tests in \texttt{KCLTicketingSystem/tests/} and chatbot tests in \texttt{AIChatbot/tests.py}. Frontend tests are distributed across pages, components, API service modules, utility functions, and Redux slices.
@@ -130,13 +130,23 @@ $\Downarrow$
 
 \subsection{Current observed run status}
 
-On the most recent full backend run in this branch:
+On the most recent full automated runs in this branch:
 \begin{itemize}
-	\item \textbf{574 backend tests} were discovered and executed.
-	\item \textbf{569 passed}, with \textbf{1 failure} and \textbf{4 errors} detected.
+	\item \textbf{Backend (Django):} 630 tests discovered and executed; \textbf{630 passed}.
+	\item \textbf{Frontend (Jest/RTL):} 42 test suites and 410 tests executed; \textbf{all passed}.
 \end{itemize}
 
-This is useful evidence that the suite is active and capable of catching regressions. The failing set is concentrated in edge/error-path scenarios, which indicates the test suite is probing beyond only happy paths.
+This confirms the regression suite is active and stable, while still exercising negative and edge/error-path behaviours.
+
+\subsection{Coverage snapshot (latest run)}
+
+Coverage was re-run against the updated codebase.
+\begin{itemize}
+	\item \textbf{Backend coverage (coverage.py):} \textbf{97\%} total line coverage (2006 statements, 63 missed).
+	\item \textbf{Frontend coverage (Jest/LCOV):} statements \textbf{97.35\%}, lines \textbf{98.56\%}, branches \textbf{88.33\%}, functions \textbf{96.85\%}.
+\end{itemize}
+
+The backend coverage is strong and consistent with extensive API and model testing. The frontend coverage is also strong in this run, indicating broad exercise of UI flows, component logic, and state-management paths under the current Jest suite.
 
 \section{Manual testing}
 
@@ -250,4 +260,4 @@ MT-10 & Cross-browser smoke test & Run core flows in two modern browsers (login,
 
 \section{Summary}
 
-Overall, the project uses a \textbf{hybrid testing strategy} with strong automated regression coverage and focused manual validation for usability and end-user confidence. The breadth of the automated suite (948 test cases) provides a solid technical baseline, while manual checks ensure the delivered product remains usable and coherent for students, staff, and administrators.
+Overall, the project uses a \textbf{hybrid testing strategy} with strong backend regression coverage and focused manual validation for usability and end-user confidence. The latest full automated run executed \textbf{1,040 tests} with all tests passing, and manual checks continue to ensure the delivered product remains usable and coherent for students, staff, and administrators.
