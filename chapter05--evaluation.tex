@@ -1,7 +1,21 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
+The ticketing system developed during this project successfully implements the core functionality required for submitting and managing support requests. Users can create tickets through a structured interface, while the system demonstrates integration with modern web technologies and an AI component designed to assist with handling queries. The implementation meets the primary objectives established to deliver a functional Minimum Viable Product (MVP) within the project timeframe. Despite this, several limitations remain that affect the system’s current capabilities and highlight opportunities for further development.
+
 \section{Limitations}
+One limitation relates to the integration of artificial intelligence within the system. The current implementation relies on a Gemini API key, which is provided through a free student-tier account. While this allows the AI functionality to operate, it introduces usage limitations and may not be suitable for large-scale deployment. Additionally, the API key currently functions reliably only within the deployed version of the system, which restricts the ability to test certain AI features during local development.
+
+Another limitation concerns the system’s knowledge support features. Although an FAQ section is included, the process for expanding and managing frequently asked questions could be improved. A more flexible interface that allows administrators to easily add or modify questions would make the system more adaptable to evolving user needs.
+
+Certain integrations that could improve usability are also not yet implemented. For example, the system does not currently support ticket creation through email, which would allow students to automatically generate support requests by sending an email. Similarly, integration with university platforms has not been fully explored. Connecting the system to institutional services such as Microsoft 365 could enable additional features, including automatically scheduling meetings with support staff through Microsoft Teams.
+
+Another objective that the team had aimed to achieve was enabling staff to address multiple tickets regarding the same query collectively, rather than handling each ticket individually. This feature would have streamlined responses and reduced duplicate effort. However, due to time constraints and the approaching project deadline, the team chose to prioritise completing the core functionality and ensuring the quality of the implemented features. As a result, this objective was deferred, highlighting an area for improvement in future development.
+
+\section{Future Possibilites}
+There are several opportunities to extend the system in future development. One important area is scalability. The current architecture could be expanded to support a larger number of users by scaling both the database infrastructure and the deployed application environment. This would allow the system to handle a significantly higher volume of requests while maintaining performance.
+
+Another promising direction is the expanded use of artificial intelligence within the support process. Rather than only assisting after a ticket has been created, the AI component could analyse a user’s question as it is typed and proactively suggest relevant answers or guide users to specific sections of existing documentation that directly address their issue. This approach would reduce unnecessary ticket submissions and improve efficiency for both users and support staff.
 
 Several constraints affected what could be delivered within the project scope and environment.
 

@@ -37,7 +37,8 @@ Backend tests cover:
 \begin{figure}[H]
 \centering
 \begin{minipage}{0.93\textwidth}
-\begin{lstlisting}[style=python,caption={Backend API integration test example (admin edge-case handling)}]
+%\begin{lstlisting}[language=python,caption={Backend API integration test example (admin edge-case handling)}]
+\begin{lstlisting}[caption={Backend API integration test example (admin edge-case handling)}]
 def test_admin_ticket_update_not_found(self):
 	resp = self.client.patch(
 		f"/api/admin/tickets/99999/update/",
@@ -65,7 +66,8 @@ Frontend tests use React Testing Library and Jest to verify:
 \begin{figure}[H]
 \centering
 \begin{minipage}{0.93\textwidth}
-\begin{lstlisting}[style=javascript,caption={Frontend behaviour test example (ticket submission flow)}]
+%\begin{lstlisting}[language=javascript,caption={Frontend behaviour test example (ticket submission flow)}]
+\begin{lstlisting}[caption={Frontend behaviour test example (ticket submission flow)}]
 test("submits ticket and navigates to dashboard on success", async () => {
   apiFetch.mockResolvedValue({ id: 1 });
   render(<CreateTicketPage />);
