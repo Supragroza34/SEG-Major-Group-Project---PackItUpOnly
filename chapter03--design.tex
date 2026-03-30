@@ -1,4 +1,4 @@
-\chapter{Design}
+\chapter{Design and implementation}
 \label{chap:design}
 \begin{comment}
 \defaultInstructions
@@ -44,9 +44,10 @@ The application also includes shared components that provide reusable interface 
 \subsection{State Management and API Communication}
 Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
 
-[Frontent Component Diagram]
+[Frontend component diagram]
 
 \section{Backend Structure}
+\label{sec:backend-structure}
 This section describes the organisation of the backend application and the responsibilities of its main modules.
 
 \subsection{Django Applications}
@@ -59,6 +60,7 @@ Backend functionality is implemented through Django REST views located within th
 Access control within the backend is implemented using a role-based permissions system. Users are assigned roles such as student, staff member, or administrator, which determine the actions they are permitted to perform within the system. Most API endpoints require authentication through JSON Web Tokens, ensuring that only authorised users can access protected resources. Custom permission classes are implemented to restrict certain operations to staff or administrators, such as managing meeting requests or performing administrative actions.
 
 \subsection{AI Helper Development with Gemini API}
+\label{sec:ai-helper-gemini}
 An AI-powered support assistant was developed to enhance the student experience by providing immediate, automated responses to routine queries. This feature acts as a first-line support mechanism, potentially resolving issues before a formal ticket is created. The assistant is implemented using the Google Gemini API, integrated through a dedicated backend service to provide high-performance natural language processing.
 
 From an architectural perspective, the AI helper follows a secure request-response pipeline.
@@ -99,6 +101,7 @@ Several constraints are enforced within the data model to maintain data integrit
 
 
 \section{API Design}
+\label{sec:api-design}
 The frontend communicates with the backend through a RESTful API implemented using Django REST Framework. The API exposes endpoints for authentication, ticket management, meeting requests, and administrative operations. Most endpoints require authentication using JSON Web Tokens (JWT), which are included in the Authorization header of requests in the format Bearer <token>. API endpoints are organised according to user roles and system functionality.
 
 \subsection{Authentication Endpoints}
@@ -139,7 +142,7 @@ These endpoints allow users to create and manage support tickets while enabling 
 \subsection{Meeting and Staff Endpoints}
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|l|p{7cm}|}
+\begin{tabular}{|p{6cm}|l|p{7cm}|}
 \hline
 \textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
 \hline
@@ -176,32 +179,86 @@ Meeting requests are validated against staff office hours to ensure that appoint
 \section{System Workflows}
 This section illustrates the main operational processes of the system, such as ticket creation and meeting requests, and how different components interact to complete these tasks.
 
-\subsection{Ticket Creation Workflow}
+\begin{figure}[htbp]
+    \centering
 
-\subsection{Meeting Request Workflow}
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \includegraphics[
+            width=1.0\linewidth,
+            height=1.03\textheight,
+            keepaspectratio
+        ]{images/TicketCreationFlowXX.png}
+        \caption{Ticket Creation Workflow}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.38\textwidth}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=1.1\textheight,
+            keepaspectratio
+        ]{images/RequestMeetingFlowXX.png}
+        \caption{Meeting Request Workflow}
+    \end{subfigure}
 
-\subsection{Office Hours Management Workflow}
+    \caption{System workflows (part 1)}
+\end{figure}
 
-\section{Design Decisions}
-This section discusses the key architectural and technological choices made during development and the reasoning behind these decisions.
+\begin{figure}[htbp]
+    \centering
 
-\subsection{Choice of React and Django}
-The system was implemented using a React frontend and a Django REST backend. This combination was chosen to provide a clear separation between the presentation layer and the application logic. React enables the development of a responsive single-page application that efficiently updates the user interface without requiring full page reloads, making it well suited to dashboard-style interfaces such as ticket management systems. Django REST Framework provides a structured and scalable backend environment for implementing business logic, data validation, and API endpoints.
+    \begin{subfigure}[t]{0.7\textwidth}
+        \centering
+        \includegraphics[
+            width=0.8\linewidth,
+            height=0.7\textheight,
+            keepaspectratio
+        ]{images/OfficeHoursFlowXX.png}
+        \caption{Office Hours Workflow}
+    \end{subfigure}
 
-Using a REST API between the frontend and backend also allows the system to support multiple clients in the future. For example, the same backend API could potentially be consumed by mobile applications or other services without requiring changes to the server-side implementation.
+    \caption{System workflows (part 2)}
+\end{figure}
 
-\subsection{Benefits of the Architecture}
-The chosen architecture provides several advantages for the development and maintenance of the system. Separating the frontend and backend allows user interface development to be performed independently from server-side logic. React’s component-based design supports reusable interface elements, while Django provides a structured backend environment with built-in tools such as the ORM and authentication framework. Together, these technologies enable a maintainable and scalable system architecture.
+\medskip
+\FloatBarrier
 
-\subsection{Limitations and Trade-offs}
-Despite its advantages, the chosen architecture introduces some trade-offs. Maintaining separate frontend and backend codebases increases development complexity compared to a single monolithic application. Additional configuration is also required to enable communication between the two layers, such as CORS and API proxy setup.
+\section{Design decisions and rationale}
+This section discusses the principal design and implementation choices, how they appear in the delivered system, and why alternatives were not adopted. Where helpful, choices are related to established software engineering ideas: \emph{separation of concerns}, modular decomposition, risk and cost trade-offs, and maintainability under team development.
 
-The system currently uses SQLite as the development database, which simplifies setup but is not suitable for large-scale production environments. However, the architecture allows migration to a more scalable database such as PostgreSQL if required.
+\subsection{Separation of frontend and backend (React and Django REST)}
+The system was implemented as a React single-page application talking to a Django REST backend. This reflects a deliberate \emph{separation of concerns}: the UI (presentation, routing, client state) is isolated from server-side business rules, persistence, and authorisation. In practice, students and staff interact with page components under \texttt{src/pages/} and shared UI under \texttt{src/components/}, while tickets, meetings, and roles are enforced in Django views and serializers---a clear boundary that matches the three-tier structure described earlier.
 
-The use of stateless JSON Web Token (JWT) authentication also introduces limitations, as tokens cannot easily be revoked before expiration without additional infrastructure. For the scope of this project, this trade-off was considered acceptable.
+\textbf{Alternatives considered.} A \emph{monolithic} Django application using server-rendered templates would have reduced the number of repositories and avoided CORS, aligning with a classical Model--View--Controller style within one process. It was rejected because rich, interactive dashboards (filtering, real-time feel, client-side validation) are more naturally expressed with a component-based SPA, and the course’s learning outcomes favoured a modern split-stack delivery. Lighter Python frameworks (e.g.\ Flask or FastAPI) were not chosen because Django’s built-in user model, admin patterns, and ORM reduced bespoke code for authentication and data modelling, improving delivery speed for a fixed-term group project.
 
-\subsection{Alternative Approaches Considered}
-Several alternative approaches were considered during the design process. A server-rendered application using Django templates was evaluated but rejected due to its limited support for dynamic user interfaces. Other options, such as Next.js server-side rendering, GraphQL APIs, and microservice architectures, were also considered but were deemed unnecessarily complex for the scope of the project. A REST-based architecture using React and Django REST Framework provided a simpler and more appropriate solution.
+\textbf{REST as the integration style.} Exposing a JSON REST API is a conventional \emph{client--server} contract: stable resources (\texttt{/api/tickets/}, \texttt{/api/staff/}, etc.) allow the frontend to evolve independently of URL structure and support future clients (e.g.\ a mobile app) without rewriting core logic---an application of the \emph{open--closed} idea at the API boundary.
+
+\subsection{Generative AI: Google Gemini API versus self-hosted inference (e.g.\ Ollama)}
+The AI helper is implemented by calling the \textbf{Google Gemini API} from the backend (see Section~\ref{sec:ai-helper-gemini}), not by running a large language model on the group’s own infrastructure.
+
+\textbf{Why a managed API was chosen.} From a software engineering perspective, outsourcing inference to a managed API reduces \emph{operational risk}: the team does not provision GPUs, tune model serving, or patch inference runtimes. Integration is limited to HTTP requests, authentication, and prompt design---complexity that fits the ticketing domain without becoming an MLOps project. The end product reflects this as a thin server-side adapter (Django endpoint $\rightarrow$ Gemini) and a predictable failure mode (rate limits, timeouts) handled in application code.
+
+\textbf{Why Ollama (or similar self-hosted stacks) was not used.} Early prototypes considered running a local or server-hosted model via \textbf{Ollama}, which would keep data on infrastructure the team controls and avoid per-token cloud pricing. This path was set aside for several reasons. Deploying Ollama for production-quality use implies either (i)~sufficient CPU/RAM on the deployment host for acceptable latency, or (ii)~GPU-backed cloud instances, which incur \emph{ongoing cost} and operational overhead (monitoring, restarts, model versioning). Coordinating consistent deployment across developers and a hosted environment would also have been harder than calling an API with a server-stored key. For a coursework timeline and team size, the managed API offered lower deployment friction and more predictable integration effort, at the expense of dependency on Google’s service and quota limits---trade-offs accepted and documented in the evaluation chapter.
+
+\subsection{Authentication and data store choices}
+\textbf{JWT.} Token-based authentication was chosen for stateless API access from the SPA. Alternatives include session cookies with CSRF protection for same-site deployments; JWT was preferred because it keeps authorisation explicit in API requests and matches common SPA tutorials and tooling, though it complicates token revocation without extra infrastructure (see below).
+
+\textbf{SQLite versus PostgreSQL.} Local development uses SQLite to minimise setup; production uses Neon-hosted PostgreSQL. This follows the idea of \emph{environment parity} through the ORM: the same Django models run against both, reducing ``works on my machine'' defects while keeping developer onboarding lightweight.
+
+\subsection{How decisions are reflected in the end product}
+The architecture is not only conceptual: the repository layout mirrors it (React \texttt{src/} tree, Django \texttt{apps/}, REST routes in tables in Section~\ref{sec:api-design}), role-based access appears in both UI routes and permission classes, and the AI assistant is a concrete module (\texttt{AIChatbot}) rather than an ad hoc script. That alignment between design intent and implementation makes the system easier for future maintainers to navigate.
+
+\subsection{Benefits of the chosen architecture}
+Separating the frontend and backend allows parallel development and clearer ownership of defects. React’s component model supports reuse of navigation and layout; Django provides ORM migrations, validation, and a consistent pattern for API endpoints. Together, these support maintainability and incremental extension (e.g.\ new ticket types or admin reports) without a full rewrite.
+
+\subsection{Limitations and trade-offs}
+Maintaining two codebases increases coordination and requires CORS and proxy configuration. Stateless JWT access tokens simplify the server but make immediate revocation harder without a token blocklist or short lifetimes paired with refresh flows---acceptable for this project’s threat model.
+
+SQLite is unsuitable for high-concurrency production workloads but is acceptable for development; PostgreSQL on Neon addresses deployment needs. The generative AI feature depends on external API availability and quotas, which constrains load testing and demo frequency.
+
+\subsection{Other alternative approaches considered}
+A server-rendered Django-only application was rejected for limited richness of interactive dashboards. Next.js, GraphQL, and microservices were judged to add operational and learning-curve cost disproportionate to team size and scope. A REST monolith (single Django service with multiple apps) was preferred over microservices because the domain is a single bounded context (ticketing and related workflows), matching the principle of starting with a \emph{modular monolith} before splitting services.
 
 
 \begin{comment}
