@@ -18,7 +18,7 @@ This section describes the overall architecture of the system and how the fronte
 
 \subsection{System Layers}
 
-The PackItUp ticketing system follows a three-tier client–server architecture consisting of a React frontend, a Django REST backend, and a relational database. This layered design separates presentation logic, application logic, and data storage.
+The PackItUpOnly ticketing system follows a three-tier client–server architecture consisting of a React frontend, a Django REST backend, and a relational database. This layered design separates presentation logic, application logic, and data storage.
 
 The frontend is implemented as a React single-page application (SPA) running on port 3000, responsible for rendering the user interface, managing routing, and maintaining application state. The frontend communicates with the backend through RESTful API calls secured with JSON Web Token (JWT) authentication.
 
@@ -26,7 +26,7 @@ The backend is implemented using Django and Django REST Framework, running on po
 
 While an SQLite database is used for persistent storage during local development, the deployed production environment utilizes a cloud-hosted PostgreSQL database provided by Neon (neon.tech). Access to both is managed seamlessly through Django’s Object Relational Mapping (ORM) layer, ensuring environment parity.
 
- [System Architecture Diagram]
+
  % TODO: Insert System Architecture Diagram (React → Django REST → Database)
 
 \section{Component Design}
@@ -44,7 +44,7 @@ The application also includes shared components that provide reusable interface 
 \subsection{State Management and API Communication}
 Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
 
-[Frontend component diagram]
+
 
 \section{Backend Structure}
 \label{sec:backend-structure}
@@ -79,11 +79,11 @@ Operational safeguards were also implemented to maintain service quality.
 
 \textbf{Optimization:} Generation parameters, including temperature and maximum token limits, were calibrated to balance response depth with low-latency interactions in the student dashboard.
 
-[Backend component diagram]
+
 
 \section{Database Design}
 
-[UML Class Diagram]
+
 
 This section describes the structure of the system’s persistent data storage and the relationships between the main entities used by the application.
 
