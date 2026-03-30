@@ -142,7 +142,7 @@ These endpoints allow users to create and manage support tickets while enabling 
 \subsection{Meeting and Staff Endpoints}
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|l|p{7cm}|}
+\begin{tabular}{|p{6cm}|l|p{7cm}|}
 \hline
 \textbf{Endpoint} & \textbf{Method} & \textbf{Purpose} \\
 \hline
@@ -179,11 +179,50 @@ Meeting requests are validated against staff office hours to ensure that appoint
 \section{System Workflows}
 This section illustrates the main operational processes of the system, such as ticket creation and meeting requests, and how different components interact to complete these tasks.
 
-\subsection{Ticket Creation Workflow}
+\begin{figure}[htbp]
+    \centering
 
-\subsection{Meeting Request Workflow}
+    \begin{subfigure}[t]{0.6\textwidth}
+        \centering
+        \includegraphics[
+            width=1.0\linewidth,
+            height=1.03\textheight,
+            keepaspectratio
+        ]{images/TicketCreationFlowXX.png}
+        \caption{Ticket Creation Workflow}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.38\textwidth}
+        \centering
+        \includegraphics[
+            width=\linewidth,
+            height=1.1\textheight,
+            keepaspectratio
+        ]{images/RequestMeetingFlowXX.png}
+        \caption{Meeting Request Workflow}
+    \end{subfigure}
 
-\subsection{Office Hours Management Workflow}
+    \caption{System workflows (part 1)}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+
+    \begin{subfigure}[t]{0.7\textwidth}
+        \centering
+        \includegraphics[
+            width=0.8\linewidth,
+            height=0.7\textheight,
+            keepaspectratio
+        ]{images/OfficeHoursFlowXX.png}
+        \caption{Office Hours Workflow}
+    \end{subfigure}
+
+    \caption{System workflows (part 2)}
+\end{figure}
+
+\medskip
+\FloatBarrier
 
 \section{Design decisions and rationale}
 This section discusses the principal design and implementation choices, how they appear in the delivered system, and why alternatives were not adopted. Where helpful, choices are related to established software engineering ideas: \emph{separation of concerns}, modular decomposition, risk and cost trade-offs, and maintainability under team development.
