@@ -60,18 +60,6 @@ The application also includes shared components that provide reusable interface 
 \subsection{State Management and API Communication}
 Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
 
-\subsection{UML Diagrams}
-Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
-\begin{figure}[t]
-    \centering
-    \includegraphics[
-            width=1.1\linewidth,
-            height=1.1\textheight,
-            keepaspectratio
-        ]{images/UMLClassDiagram.png}
-    \caption{UML Class Diagram for the KCL Ticketing System}
-    \label{fig:system-architecture}
-\end{figure}
 
 
 \section{Backend Structure}
@@ -83,6 +71,19 @@ The backend is implemented using Django and Django REST Framework and is structu
 
 \subsection{View Organisation}
 Backend functionality is implemented through Django REST views located within the KCLTicketingSystems/views/ directory. These views expose API endpoints responsible for key operations such as ticket creation, ticket updates, replies, staff dashboards, and meeting requests. Administrative functionality is handled through separate views that provide system management capabilities including user administration, ticket oversight, and reporting.
+
+\subsection{UML Diagrams}
+The UML diagrams provide a visual representation of the system’s core entities and relationships, illustrating how components such as users, tickets, replies, and meeting requests interact in alignment with the Django ORM data model.
+\begin{figure}[t]
+    \centering
+    \includegraphics[
+            width=1.1\linewidth,
+            height=1.1\textheight,
+            keepaspectratio
+        ]{images/UMLClassDiagram.png}
+    \caption{UML Class Diagram for the KCL Ticketing System}
+    \label{fig:system-architecture}
+\end{figure}
 
 \subsection{Permissions and Access Control}
 Access control within the backend is implemented using a role-based permissions system. Users are assigned roles such as student, staff member, or administrator, which determine the actions they are permitted to perform within the system. Most API endpoints require authentication through JSON Web Tokens, ensuring that only authorised users can access protected resources. Custom permission classes are implemented to restrict certain operations to staff or administrators, such as managing meeting requests or performing administrative actions.
