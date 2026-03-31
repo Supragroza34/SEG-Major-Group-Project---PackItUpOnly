@@ -20,7 +20,7 @@ The delivered codebase contains a broad automated suite across backend and front
 \begin{itemize}
 	\item \textbf{Backend (Django/DRF):} 41 test files across app-level, project-level, and chatbot tests.
 	\item \textbf{Frontend (React/Jest):} 42 test files across pages, components, store slices, services, and utilities.
-	\item \textbf{Full run used for this report:} 630 backend tests and 410 frontend tests (\textbf{1,040 total}), all passing.
+	\item \textbf{Full run used for this report:} 587 backend tests and 411 frontend tests (\textbf{998 total}), all passing.
 \end{itemize}
 
 Backend tests are concentrated in \texttt{KCLTicketingSystems/tests/}, with additional configuration tests in \texttt{KCLTicketingSystem/tests/} and chatbot tests in \texttt{AIChatbot/tests.py}. Frontend tests are distributed across pages, components, API service modules, utility functions, and Redux slices.
@@ -132,8 +132,8 @@ $\Downarrow$
 
 In our final full automated test runs, the results were:
 \begin{itemize}
-	\item \textbf{Backend (Django):} 630 tests discovered and executed; \textbf{630 passed}.
-	\item \textbf{Frontend (Jest/RTL):} 42 test suites and 410 tests executed; \textbf{all passed}.
+	\item \textbf{Backend (Django):} 587 tests discovered and executed; \textbf{587 passed}.
+	\item \textbf{Frontend (Jest/RTL):} 42 test suites and 411 tests executed; \textbf{all passed}.
 \end{itemize}
 
 It should be noted that several tests in the automated suite intentionally verify error-handling scenarios, such as 401 Unauthorized, 403 Forbidden, or 502 Bad Gateway responses. These tests are designed to confirm that the system correctly handles invalid authentication, permission violations, or downstream service failures. Therefore, the presence of these HTTP status codes in test assertions does not indicate failing tests; rather, they confirm that the application returns the expected error responses under controlled conditions.
@@ -144,8 +144,8 @@ This shows the regression suite is stable, while still checking negative and edg
 
 From the same test cycle, coverage was:
 \begin{itemize}
-	\item \textbf{Backend coverage (coverage.py):} \textbf{97\%} total line coverage (2006 statements, 63 missed).
-	\item \textbf{Frontend coverage (Jest/LCOV):} statements \textbf{97.35\%}, lines \textbf{98.56\%}, branches \textbf{88.33\%}, functions \textbf{96.85\%}.
+	\item \textbf{Backend coverage (coverage.py):} \textbf{97\%} total line coverage (1711 statements, 47 missed).
+	\item \textbf{Frontend coverage (Jest/LCOV):} statements \textbf{97.34\%}, lines \textbf{98.56\%}, branches \textbf{88.24\%}, functions \textbf{96.85\%}.
 \end{itemize}
 
 These figures show good automated coverage for both backend and frontend functionality, including API/model logic, UI flows, and state management paths.
@@ -262,4 +262,4 @@ MT-10 & Cross-browser smoke test & Run core flows in two modern browsers (login,
 
 \section{Summary}
 
-Overall, the project uses a \textbf{hybrid testing strategy} with strong backend regression coverage and focused manual validation for usability and end-user confidence. In the full automated test run used for this report, \textbf{1,040 tests} were executed and all passed. Manual checks were then used to confirm that the delivered product remains usable and coherent for students, staff, and administrators.
+Overall, the project uses a \textbf{hybrid testing strategy} with strong backend regression coverage and focused manual validation for usability and end-user confidence. In the full automated test run used for this report, \textbf{998 tests} were executed and all passed. Manual checks were then used to confirm that the delivered product remains usable and coherent for students, staff, and administrators.
