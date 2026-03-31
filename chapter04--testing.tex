@@ -136,6 +136,8 @@ In our final full automated test runs, the results were:
 	\item \textbf{Frontend (Jest/RTL):} 42 test suites and 410 tests executed; \textbf{all passed}.
 \end{itemize}
 
+It should be noted that several tests in the automated suite intentionally verify error-handling scenarios, such as 401 Unauthorized, 403 Forbidden, or 502 Bad Gateway responses. These tests are designed to confirm that the system correctly handles invalid authentication, permission violations, or downstream service failures. Therefore, the presence of these HTTP status codes in test assertions does not indicate failing tests; rather, they confirm that the application returns the expected error responses under controlled conditions.
+
 This shows the regression suite is stable, while still checking negative and edge/error-path behaviour.
 
 \subsection{Coverage snapshot (latest run)}
