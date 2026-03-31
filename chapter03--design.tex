@@ -27,10 +27,26 @@ The backend is implemented using Django and Django REST Framework, running on po
 While an SQLite database is used for persistent storage during local development, the deployed production environment utilizes a cloud-hosted PostgreSQL database provided by Neon (neon.tech). Access to both is managed seamlessly through Django’s Object Relational Mapping (ORM) layer, ensuring environment parity.
 
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[
+            width=1.0\linewidth,
+            height=0.9\textheight,
+            keepaspectratio
+        ]{images/ComponentDiagram.png}
+    \caption{System Diagram for the KCL Ticketing System}
+    \label{fig:system-architecture}
+\end{figure}
+
+\FloatBarrier
+
+
+
  % TODO: Insert System Architecture Diagram (React → Django REST → Database)
 
 \section{Component Design}
 This section describes the structure of the frontend components and how they organise the user interface and system functionality.
+
 
 \subsection{Frontend Pages}
 The frontend application is implemented as a React single-page application and is organised into modular page components located within the src/pages/ directory. Each page represents a major functional area of the system and interacts with the backend through REST API requests. For example, the UserDashboardPage allows students to view and manage their submitted tickets, while the StaffDashboardPage enables staff members to review and update assigned tickets. Ticket creation is handled through pages such as TicketFormPage, while additional pages provide supporting functionality including browsing staff members, requesting meetings, and viewing frequently asked questions.
@@ -44,6 +60,18 @@ The application also includes shared components that provide reusable interface 
 \subsection{State Management and API Communication}
 Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
 
+\subsection{UML Diagrams}
+Global application state is managed using Redux Toolkit, which provides a centralised store for managing shared data across the application. The authSlice manages user authentication state, while the adminSlice maintains state related to administrative dashboard data. Communication between the frontend and backend is handled through REST API calls using a centralised API utility (apiFetch). This utility automatically includes authentication credentials in requests by attaching a JSON Web Token to the Authorization header in the format Bearer <JWT\textunderscore TOKEN>. Axios is also used for certain operations requiring additional request configuration.
+\begin{figure}[t]
+    \centering
+    \includegraphics[
+            width=1.1\linewidth,
+            height=1.1\textheight,
+            keepaspectratio
+        ]{images/UMLClassDiagram.png}
+    \caption{UML Class Diagram for the KCL Ticketing System}
+    \label{fig:system-architecture}
+\end{figure}
 
 
 \section{Backend Structure}
@@ -177,7 +205,6 @@ Meeting requests are validated against staff office hours to ensure that appoint
 
 
 \section{System Workflows}
-This section illustrates the main operational processes of the system, such as ticket creation and meeting requests, and how different components interact to complete these tasks.
 
 \begin{figure}[htbp]
     \centering
@@ -189,7 +216,7 @@ This section illustrates the main operational processes of the system, such as t
             height=1.03\textheight,
             keepaspectratio
         ]{images/TicketCreationFlowXX.png}
-        \caption{Ticket Creation Workflow}
+        
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.38\textwidth}
@@ -199,7 +226,6 @@ This section illustrates the main operational processes of the system, such as t
             height=1.1\textheight,
             keepaspectratio
         ]{images/RequestMeetingFlowXX.png}
-        \caption{Meeting Request Workflow}
     \end{subfigure}
 
     \caption{System workflows (part 1)}
@@ -215,7 +241,6 @@ This section illustrates the main operational processes of the system, such as t
             height=0.7\textheight,
             keepaspectratio
         ]{images/OfficeHoursFlowXX.png}
-        \caption{Office Hours Workflow}
     \end{subfigure}
 
     \caption{System workflows (part 2)}
